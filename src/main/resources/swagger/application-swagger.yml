@@ -1,0 +1,14 @@
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs/assignment
+  swagger-ui:
+    path: /assignment/v1/api-docs-ui.html
+  version: 'v1.0.0'
+  show-actuator: true
+
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  model-and-view-allowed: false
+  paths-to-match:
+    - /api/v1/**
