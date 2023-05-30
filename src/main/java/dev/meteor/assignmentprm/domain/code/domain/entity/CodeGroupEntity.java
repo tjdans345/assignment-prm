@@ -1,6 +1,6 @@
 package dev.meteor.assignmentprm.domain.code.domain.entity;
 
-import dev.meteor.assignmentprm.domain.code.enums.CodeGroupEnum;
+import dev.meteor.assignmentprm.domain.code.enums.CodeGroupStatusEnum;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -30,20 +30,21 @@ public class CodeGroupEntity {
 
     private String deleteYn; // 삭제여부
 
-    private String useYn; // 사용여부
+    @Enumerated(EnumType.STRING)
+    private CodeGroupStatusEnum status; // 코드 그룹 상태
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "group_idx")
     private List<CodeEntity> codeEntityList;
 
     @Builder
     public CodeGroupEntity(Long idx, String name, String description,
-                           LocalDateTime deleteDate, String deleteYn, String useYn, List<CodeEntity> codeEntityList) {
+                           LocalDateTime deleteDate, String deleteYn, CodeGroupStatusEnum status, List<CodeEntity> codeEntityList) {
         this.idx = idx;
         this.name = name;
         this.description = description;
         this.deleteDate = deleteDate;
         this.deleteYn = deleteYn;
-        this.useYn = useYn;
+        this.status = status;
         this.codeEntityList = codeEntityList;
     }
 }

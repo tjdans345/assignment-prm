@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/assignment-db?useSSL=false
-    username: ejm
-    password: ejm1234
+    url: jdbc:mysql:{prod-db-server-url}//:3306/assignment-db?useSSL=false
+    username: {prod-db-username}
+    password: {prod-db-password}
 
 
   jpa:

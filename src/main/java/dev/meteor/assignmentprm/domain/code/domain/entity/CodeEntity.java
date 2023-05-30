@@ -1,7 +1,7 @@
 package dev.meteor.assignmentprm.domain.code.domain.entity;
 
 
-import dev.meteor.assignmentprm.domain.code.enums.CodeGroupEnum;
+import dev.meteor.assignmentprm.domain.code.enums.CodeStatusEnum;
 import dev.meteor.assignmentprm.global.common.domain.enity.BaseCreateAndUpdateTimeEntity;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
@@ -35,17 +35,18 @@ public class CodeEntity extends BaseCreateAndUpdateTimeEntity {
 
     private String deleteYn; // 삭제여부
 
-    private String useYn; // 사용여부
+    @Enumerated(EnumType.STRING)
+    private CodeStatusEnum status; // 코드 상태
 
     @Builder
     public CodeEntity(Long idx, String name, Long group_idx,
-                      LocalDateTime deleteDate, String deleteYn, String useYn) {
+                      LocalDateTime deleteDate, String deleteYn, CodeStatusEnum status ) {
         this.idx = idx;
         this.name = name;
         this.group_idx = group_idx;
         this.deleteDate = deleteDate;
         this.deleteYn = deleteYn;
-        this.useYn = useYn;
+        this.status = status;
     }
 
 }
