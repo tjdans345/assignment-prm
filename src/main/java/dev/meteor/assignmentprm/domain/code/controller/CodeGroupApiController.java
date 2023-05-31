@@ -126,6 +126,8 @@ public class CodeGroupApiController {
      * @param idx Long
      * @return String (결과 메시지)
      */
+    @ApiDocumentResponseAnnotation
+    @Operation(summary = "코드 그룹 삭제 API", description = "코드 삭제 처리")
     @DeleteMapping("/{idx}")
     public HttpEntity<ResponseDTO<String>> deleteCodeGroup(@PathVariable Long idx) {
         return ResponseEntity.ok().body(
