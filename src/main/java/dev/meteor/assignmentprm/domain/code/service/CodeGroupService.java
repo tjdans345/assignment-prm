@@ -61,14 +61,6 @@ public class CodeGroupService {
 
         // 데이터 유효성 검증 진행
         checkDataValid(checkDuplicateNameRequestDTO.getCheckName());
-
-        // 중복체크 진행
-        // AOP 로 리팩토링 진행 완료
-//        codeGroupRepository.findByName(checkDuplicateNameRequestDTO.getCheckName()).ifPresent(
-//                codeGroupEntity -> {throw new CommonException(
-//                        ErrorEnum.ALREADY_DATA
-//                );}
-//        );
         return true;
     }
 
