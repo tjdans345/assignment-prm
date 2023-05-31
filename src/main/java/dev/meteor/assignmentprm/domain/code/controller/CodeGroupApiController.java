@@ -12,6 +12,7 @@ import dev.meteor.assignmentprm.global.common.domain.dto.response.ResponseDTO;
 import dev.meteor.assignmentprm.global.enum_package.response.ResponseEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -41,7 +42,7 @@ public class CodeGroupApiController {
     @Operation(summary = "코드 그룹 리스트 조회 API", description = "코드 그룹 리스트 조회 처리")
     @GetMapping
     public HttpEntity<ResponseDTO<Page<CodeGroupResponseDTO>>> getCodeGroupList(
-            @PageableDefault(sort = "idx", direction = Sort.Direction.DESC) Pageable pageable) {
+            @ParameterObject @PageableDefault(sort = "idx", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(
                 new ResponseDTO<>(
                         ResponseEnum.FIND_SUCCESS,
