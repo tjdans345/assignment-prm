@@ -7,8 +7,6 @@ spring:
   config:
     import:
 
-
-
 # prod ????? docs ? ??? ?? ???
 # ( dev : true / prod : false )
 api-docs-enable: true
