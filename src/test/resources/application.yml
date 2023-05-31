@@ -13,11 +13,11 @@ spring:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
     properties:
       hibernate:
-        format_sql: true #To beautify or pretty print the SQL
-        show_sql: true #show sql
+        format_sql: true
+        show_sql: true
     open-in-view: false
     generate-ddl: false
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect # DB Dialect(??) ??
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
 
 server:
   servlet:
