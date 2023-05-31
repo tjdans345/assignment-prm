@@ -17,7 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -108,6 +110,9 @@ public class CodeGroupService {
         }
         CodeGroupEntity codeGroup = codeGroupOptional.get();
 
+        // 삭제 여부 체크 삭제 된 데이터는 데이터 값 수정 안하기 위한 목적
+        checkDeleteData(codeGroup);
+
         codeGroup.setName(updateCodeGroupRequestDTO.getCodeGroupName());
         codeGroup.setStatus(CodeGroupStatusEnum.valueOf(updateCodeGroupRequestDTO.getCodeGroupStatus()));
         codeGroup.setDescription(updateCodeGroupRequestDTO.getCodeGroupDescription());
@@ -118,8 +123,45 @@ public class CodeGroupService {
     }
 
     // 코드 그룹 삭제
-    public void deleteCodeGroup(Long idx) {
+    @Transactional
+    public String deleteCodeGroup(Long idx) {
 
+        Optional<CodeGroupEntity> codeGroupOptional = codeGroupRepository.findById(idx);
+        if(codeGroupOptional.isEmpty()) {
+            throw new CommonException(ErrorEnum.NOT_FOUND_DATA);
+        }
+        CodeGroupEntity codeGroup = codeGroupOptional.get();
+
+        // 데이터 삭제 여부 체크 ( 이미 삭제 된 데이터면 이 후 로직 실행 안시키기 위함 )
+        checkDeleteData(codeGroup);
+
+        // TODO 테스트 진행해봐야 함 (영속성)
+        if(codeGroup.getCodeEntityList() != null && !codeGroup.getCodeEntityList().isEmpty()) {
+            codeGroup.setCodeEntityList(codeGroup.getCodeEntityList().stream().peek(
+                    codeEntity -> {
+                        codeEntity.setDeleteYn("Y");
+                        codeEntity.setDeleteDate(LocalDateTime.now());
+                    }
+            ).collect(Collectors.toList()));
+        }
+
+        codeGroup.setDeleteYn("Y");
+        codeGroup.setDeleteDate(LocalDateTime.now());
+
+        codeGroupRepository.save(codeGroup);
+
+        return "삭제 처리에 성공하였습니다.";
+
+    }
+
+    /**
+     * 코드 그룹 데이터 삭제 여부 체크 Method
+     * @param codeGroup CodeGroupEntity
+     */
+    private void checkDeleteData(CodeGroupEntity codeGroup) {
+        if("Y".equals(codeGroup.getDeleteYn())) {
+            throw new CommonException(ErrorEnum.ALREADY_DELETE_DATA);
+        }
     }
 
 }

@@ -11,6 +11,7 @@ public enum ErrorEnum {
     EMPTY_LIST(11, "데이터가 없습니다.", HttpStatus.NOT_FOUND),
     EMPTY_REQUEST_DATA(12, "요청값 데이터가 없습니다.", HttpStatus.BAD_REQUEST),
     ALREADY_DATA(13, "중복된 데이터가 존재합니다.", HttpStatus.BAD_REQUEST),
+    ALREADY_DELETE_DATA(14, "이미 삭제된 데이터입니다. 다시 요청하여 주십시오.", HttpStatus.BAD_REQUEST),
 
     NOT_FOUND_DATA(40, "요청한 데이터가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
 

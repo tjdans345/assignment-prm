@@ -3,10 +3,8 @@ package dev.meteor.assignmentprm.domain.code.controller;
 
 import dev.meteor.assignmentprm.domain.code.domain.dto.request.CheckDuplicateNameRequestDTO;
 import dev.meteor.assignmentprm.domain.code.domain.dto.request.CreateCodeGroupRequestDTO;
-import dev.meteor.assignmentprm.domain.code.domain.dto.request.CreateCodeRequestDTO;
 import dev.meteor.assignmentprm.domain.code.domain.dto.request.UpdateCodeGroupRequestDTO;
 import dev.meteor.assignmentprm.domain.code.domain.dto.response.CodeGroupResponseDTO;
-import dev.meteor.assignmentprm.domain.code.domain.entity.CodeGroupEntity;
 import dev.meteor.assignmentprm.domain.code.service.CodeGroupService;
 import dev.meteor.assignmentprm.global.aop.annotation.ApiDocumentResponseAnnotation;
 import dev.meteor.assignmentprm.global.aop.annotation.CodeGroupNameDuplicateCheckAnnotation;
@@ -123,11 +121,18 @@ public class CodeGroupApiController {
                 ));
     }
 
+    /**
+     * 코드 그룹 삭제 처리
+     * @param idx Long
+     * @return String (결과 메시지)
+     */
     @DeleteMapping("/{idx}")
-    // 코드 그룹 삭제
-    public HttpEntity<ResponseEntity<?>> deleteCodeGroup(@PathVariable Long idx) {
-        codeGroupService.deleteCodeGroup(idx);
-        return null;
+    public HttpEntity<ResponseDTO<String>> deleteCodeGroup(@PathVariable Long idx) {
+        return ResponseEntity.ok().body(
+                new ResponseDTO<>(
+                        ResponseEnum.UPDATE_SUCCESS,
+                        codeGroupService.deleteCodeGroup(idx)
+                ));
     }
 
 
