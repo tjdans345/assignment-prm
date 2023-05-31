@@ -113,7 +113,7 @@ public class CodeRepositoryTest {
                 .status(CodeStatusEnum.ACTIVE)
                 .deleteYn(deleteYn)
                 .description(newDescription)
-                .group_idx(codeGroup.getIdx())
+                .group(codeGroup)
                 .build());
     }
 
