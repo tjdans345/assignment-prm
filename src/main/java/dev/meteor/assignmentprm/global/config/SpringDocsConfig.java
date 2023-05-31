@@ -35,7 +35,7 @@ public class SpringDocsConfig {
                 .contact(
                         new Contact()
                                 .name("Meteor \uD83E\uDDD1\uD83C\uDFFB\u200D\uD83D\uDCBB ")
-                                .email("tjdans345@naver.com \uD83D\uDCEE")); // 정보 및 연락처
+                                .email("tjdans345@naver.com \uD83D\uDCEE"));
 
         return new OpenAPI()
                 .components(new Components())

@@ -4,6 +4,7 @@ package dev.meteor.assignmentprm.domain.code.controller;
 import dev.meteor.assignmentprm.domain.code.domain.dto.request.CheckDuplicateNameRequestDTO;
 import dev.meteor.assignmentprm.domain.code.domain.dto.request.CreateCodeGroupRequestDTO;
 import dev.meteor.assignmentprm.domain.code.domain.dto.request.CreateCodeRequestDTO;
+import dev.meteor.assignmentprm.domain.code.domain.dto.request.UpdateCodeGroupRequestDTO;
 import dev.meteor.assignmentprm.domain.code.domain.dto.response.CodeGroupResponseDTO;
 import dev.meteor.assignmentprm.domain.code.domain.entity.CodeGroupEntity;
 import dev.meteor.assignmentprm.domain.code.service.CodeGroupService;
@@ -31,24 +32,37 @@ public class CodeGroupApiController {
 
     private final CodeGroupService codeGroupService;
 
+    /**
+     * 코드 그룹 리스트 조회 ver.1
+     * TODO rfd : 무한 스크롤 방식 , 타입 별, 조건 별에 따른 업데이트 가능성 有
+     * @param pageable Pageable
+     * @return CodeGroupResponseDTO
+     */
     @GetMapping
-    public HttpEntity<ResponseDTO<Page<CodeGroupEntity>>> getCodeGroupList(
+    public HttpEntity<ResponseDTO<Page<CodeGroupResponseDTO>>> getCodeGroupList(
             @PageableDefault(sort = "idx", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(
                 new ResponseDTO<>(
-                        ResponseEnum.TEST_CODE,
+                        ResponseEnum.FIND_SUCCESS,
                         codeGroupService.getCodeGroupList(pageable)
                 ));
     }
 
 
-    // 코드 그룹 상세 조회
+
+    /**
+     * 코드 그룹 상세 조회 (by Idx)
+     * @param idx Long (코드 그룹 인덱스)
+     * @return CodeGroupResponseDTO
+     */
     @GetMapping("/{idx}")
-    public HttpEntity<?> getCodeGroupDetail(@PathVariable Long idx) {
-
-        codeGroupService.getCodeGroupDetail(idx);
-
-        return null;
+    public HttpEntity<ResponseDTO<CodeGroupResponseDTO>> getCodeGroupDetail(@PathVariable Long idx) {
+        return ResponseEntity.ok(
+                new ResponseDTO<>(
+                        ResponseEnum.FIND_SUCCESS,
+                        codeGroupService.getCodeGroupDetail(idx)
+                )
+        );
     }
 
     /**
@@ -90,15 +104,23 @@ public class CodeGroupApiController {
                 ));
     }
 
-
+    /**
+     * 코드 그룹 수정 처리
+     * @param updateCodeGroupRequestDTO UpdateCodeGroupRequestDTO
+     * @param bindingResult BindingResult
+     * @return CodeGroupResponseDTO
+     */
+    @ApiDocumentResponseAnnotation
+    @Operation(summary = "코드 그룹 수정 API", description = "코드 그룹 수정처리")
     @PutMapping
-    // 코드 그룹 수정
-    public HttpEntity<ResponseEntity<?>> updateCodeGroup(
-            @Valid @RequestBody Object O, BindingResult bindingResult
+    public HttpEntity<ResponseDTO<CodeGroupResponseDTO>> updateCodeGroup(
+            @Valid @RequestBody UpdateCodeGroupRequestDTO updateCodeGroupRequestDTO , BindingResult bindingResult
     ) {
-
-        codeGroupService.updateCodeGroup();
-        return null;
+        return ResponseEntity.ok().body(
+                new ResponseDTO<>(
+                        ResponseEnum.UPDATE_SUCCESS,
+                        codeGroupService.updateCodeGroup(updateCodeGroupRequestDTO)
+                ));
     }
 
     @DeleteMapping("/{idx}")

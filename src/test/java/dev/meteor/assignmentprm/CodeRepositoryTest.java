@@ -105,7 +105,6 @@ public class CodeRepositoryTest {
 
         CodeGroupEntity codeGroup = saveCodeGroup();
 
-
         return codeRepository.save(CodeEntity.builder()
                 .idx(null)
                 .uuid(uuid)

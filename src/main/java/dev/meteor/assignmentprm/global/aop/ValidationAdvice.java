@@ -41,7 +41,7 @@ public class ValidationAdvice {
     }
 
     /**
-     * TODO : 데이터 구조를 바꾸거나 다형성을 이용해서 코드 중복처리 개선 처리 진행할 수 있음
+     * TODO : 데이터 구조를 바꾸거나 다형성을 이용해서 코드 중복처리 개선 처리 진행 가능성 있음 20230531
      * @param joinPoint JoinPoint
      */
     @Before("@annotation(dev.meteor.assignmentprm.global.aop.annotation.CodeGroupNameDuplicateCheckAnnotation)")

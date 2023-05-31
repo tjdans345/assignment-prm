@@ -2,6 +2,7 @@ package dev.meteor.assignmentprm.domain.code.service;
 
 import dev.meteor.assignmentprm.domain.code.domain.dto.request.CheckDuplicateNameRequestDTO;
 import dev.meteor.assignmentprm.domain.code.domain.dto.request.CreateCodeGroupRequestDTO;
+import dev.meteor.assignmentprm.domain.code.domain.dto.request.UpdateCodeGroupRequestDTO;
 import dev.meteor.assignmentprm.domain.code.domain.dto.response.CodeGroupResponseDTO;
 import dev.meteor.assignmentprm.domain.code.domain.entity.CodeGroupEntity;
 import dev.meteor.assignmentprm.domain.code.enums.CodeGroupStatusEnum;
@@ -16,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -24,17 +27,31 @@ public class CodeGroupService {
 
     private final CodeGroupRepository codeGroupRepository;
 
-    // 코드 그룹 리스트 조회
-    public Page<CodeGroupEntity> getCodeGroupList(Pageable pageable) {
+
+    /**
+     * 코드 그룹 리스트 조회
+     * Entity To Dto Converter 진행 후 리턴
+     * @param pageable Pageable
+     * @return Page<CodeGroupResponseDTO>
+     */
+    public Page<CodeGroupResponseDTO> getCodeGroupList(Pageable pageable) {
         Page<CodeGroupEntity> codeGroupPageList = codeGroupRepository.findAllByDeleteYnAndStatus(pageable, "N", CodeGroupStatusEnum.ACTIVE);
 
         if(codeGroupPageList == null || codeGroupPageList.isEmpty()) {
             throw new CommonException(ErrorEnum.EMPTY_LIST);
         }
-        return codeGroupPageList;
+        return codeGroupPageList.map(CodeGroupEntity::toCodeGroupResponseDTO);
     }
     // 코드 그룹 상세 조회
-    public void getCodeGroupDetail(Long idx) {
+    public CodeGroupResponseDTO getCodeGroupDetail(Long idx) {
+
+        Optional<CodeGroupEntity> codeGroupOptional = codeGroupRepository.findById(idx);
+
+        if(codeGroupOptional.isEmpty()) {
+            throw new CommonException(ErrorEnum.NOT_FOUND_DATA);
+        }
+
+        return codeGroupOptional.get().toCodeGroupResponseDTO();
 
     }
 
@@ -76,10 +93,28 @@ public class CodeGroupService {
         }
     }
 
+    /**
+     * 코드 그룹 수정
+     * @param updateCodeGroupRequestDTO UpdateCodeGroupRequestDTO
+     * @return CodeGroupResponseDTO
+     */
+    @Transactional
+    public CodeGroupResponseDTO updateCodeGroup(UpdateCodeGroupRequestDTO updateCodeGroupRequestDTO) {
 
-    // 코드 그룹 수정
-    public void updateCodeGroup() {
+        Optional<CodeGroupEntity> codeGroupOptional = codeGroupRepository.findById(updateCodeGroupRequestDTO.getCodeGroupIdx());
 
+        if(codeGroupOptional.isEmpty()) {
+            throw new CommonException(ErrorEnum.NOT_FOUND_DATA);
+        }
+        CodeGroupEntity codeGroup = codeGroupOptional.get();
+
+        codeGroup.setName(updateCodeGroupRequestDTO.getCodeGroupName());
+        codeGroup.setStatus(CodeGroupStatusEnum.valueOf(updateCodeGroupRequestDTO.getCodeGroupStatus()));
+        codeGroup.setDescription(updateCodeGroupRequestDTO.getCodeGroupDescription());
+
+        // 더티 체킹을 이용할 수 있지만 데이터 검증성 확보 및 영속성 업데이트를 위한 save 이용
+        CodeGroupEntity updateCodeGroup = codeGroupRepository.save(codeGroup);
+        return updateCodeGroup.toCodeGroupResponseDTO();
     }
 
     // 코드 그룹 삭제
