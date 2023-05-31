@@ -38,7 +38,7 @@ public class CodeGroupEntity extends BaseCreateAndUpdateTimeEntity {
     @Enumerated(EnumType.STRING)
     private CodeGroupStatusEnum status; // 코드 그룹 상태
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "group_idx")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "group")
     private List<CodeEntity> codeEntityList;
 
     @Builder

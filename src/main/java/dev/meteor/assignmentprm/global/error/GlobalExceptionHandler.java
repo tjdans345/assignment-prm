@@ -8,6 +8,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -71,5 +72,15 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    protected HttpEntity<ErrorResponseDTO> sqlIntegrityConstraintViolationException(HttpRequestMethodNotSupportedException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponseDTO(
+                        405,
+                        "해당 메서드가 지원하지 않는 요청 형식입니다. 확인 후 다시 요청하여 주십시오. [" + e.getMessage() +"]"
+                ));
+    }
 
 }

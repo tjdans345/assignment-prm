@@ -33,9 +33,12 @@ public class CodeGroupApiController {
     /**
      * 코드 그룹 리스트 조회 ver.1
      * TODO rfd : 무한 스크롤 방식 , 타입 별, 조건 별에 따른 업데이트 가능성 有
+     *
      * @param pageable Pageable
      * @return CodeGroupResponseDTO
      */
+    @ApiDocumentResponseAnnotation
+    @Operation(summary = "코드 그룹 리스트 조회 API", description = "코드 그룹 리스트 조회 처리")
     @GetMapping
     public HttpEntity<ResponseDTO<Page<CodeGroupResponseDTO>>> getCodeGroupList(
             @PageableDefault(sort = "idx", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -46,27 +49,28 @@ public class CodeGroupApiController {
                 ));
     }
 
-
-
     /**
      * 코드 그룹 상세 조회 (by Idx)
+     *
      * @param idx Long (코드 그룹 인덱스)
      * @return CodeGroupResponseDTO
      */
+    @ApiDocumentResponseAnnotation
+    @Operation(summary = "코드 그룹 상세 조회 API", description = "코드 그룹 상세 조회 처리")
     @GetMapping("/{idx}")
     public HttpEntity<ResponseDTO<CodeGroupResponseDTO>> getCodeGroupDetail(@PathVariable Long idx) {
         return ResponseEntity.ok(
                 new ResponseDTO<>(
                         ResponseEnum.FIND_SUCCESS,
                         codeGroupService.getCodeGroupDetail(idx)
-                )
-        );
+                ));
     }
 
     /**
      * 코드 그룹 생성
+     *
      * @param createCodeGroupRequestDTO CreateCodeGroupRequestDTO
-     * @param bindingResult BindingResult
+     * @param bindingResult             BindingResult
      * @return CodeGroupResponseDTO
      */
     @CodeGroupNameDuplicateCheckAnnotation
@@ -84,8 +88,9 @@ public class CodeGroupApiController {
 
     /**
      * 코드 그룹 이름 중복 조회
+     *
      * @param checkDuplicateNameRequestDTO CheckDuplicateNameRequestDTO
-     * @param bindingResult BindingResult
+     * @param bindingResult                BindingResult
      * @return Boolean
      */
     @CodeGroupNameDuplicateCheckAnnotation
@@ -104,15 +109,17 @@ public class CodeGroupApiController {
 
     /**
      * 코드 그룹 수정 처리
+     *
      * @param updateCodeGroupRequestDTO UpdateCodeGroupRequestDTO
-     * @param bindingResult BindingResult
+     * @param bindingResult             BindingResult
      * @return CodeGroupResponseDTO
      */
+    @CodeGroupNameDuplicateCheckAnnotation
     @ApiDocumentResponseAnnotation
     @Operation(summary = "코드 그룹 수정 API", description = "코드 그룹 수정처리")
     @PutMapping
     public HttpEntity<ResponseDTO<CodeGroupResponseDTO>> updateCodeGroup(
-            @Valid @RequestBody UpdateCodeGroupRequestDTO updateCodeGroupRequestDTO , BindingResult bindingResult
+            @Valid @RequestBody UpdateCodeGroupRequestDTO updateCodeGroupRequestDTO, BindingResult bindingResult
     ) {
         return ResponseEntity.ok().body(
                 new ResponseDTO<>(
@@ -123,11 +130,12 @@ public class CodeGroupApiController {
 
     /**
      * 코드 그룹 삭제 처리
+     *
      * @param idx Long
      * @return String (결과 메시지)
      */
     @ApiDocumentResponseAnnotation
-    @Operation(summary = "코드 그룹 삭제 API", description = "코드 삭제 처리")
+    @Operation(summary = "코드 그룹 삭제 API", description = "코드 그룹 삭제 처리")
     @DeleteMapping("/{idx}")
     public HttpEntity<ResponseDTO<String>> deleteCodeGroup(@PathVariable Long idx) {
         return ResponseEntity.ok().body(

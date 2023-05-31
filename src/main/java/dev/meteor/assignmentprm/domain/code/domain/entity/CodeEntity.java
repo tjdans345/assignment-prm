@@ -1,8 +1,10 @@
 package dev.meteor.assignmentprm.domain.code.domain.entity;
 
 
+import dev.meteor.assignmentprm.domain.code.domain.dto.response.CodeResponseDTO;
 import dev.meteor.assignmentprm.domain.code.enums.CodeStatusEnum;
 import dev.meteor.assignmentprm.global.common.domain.enity.BaseCreateAndUpdateTimeEntity;
+import dev.meteor.assignmentprm.global.utils.StringUtils;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -31,9 +33,9 @@ public class CodeEntity extends BaseCreateAndUpdateTimeEntity {
 
     private String value; // 코드 값
 
-    // 코드 그룹 인덱스
-    // 필요에 의해 연관관계 맺어도 상관없지만 코드 데이터 자체로 그룹 데이터를 필요로 하지 않는 다는 가정하에 개발 진행.
-    private Long group_idx;
+    @ManyToOne
+    @JoinColumn(name = "group_idx")
+    private CodeGroupEntity group;
 
     private LocalDateTime deleteDate; // 삭제일
 
@@ -43,16 +45,33 @@ public class CodeEntity extends BaseCreateAndUpdateTimeEntity {
     private CodeStatusEnum status; // 코드 상태
 
     @Builder
-    public CodeEntity(Long idx, String uuid, String name, String description , String value, Long group_idx,
+    public CodeEntity(Long idx, String uuid, String name,
+                      String description, String value, CodeGroupEntity group,
                       LocalDateTime deleteDate, String deleteYn, CodeStatusEnum status) {
         this.idx = idx;
         this.uuid = uuid;
         this.name = name;
         this.description = description;
         this.value = value;
-        this.group_idx = group_idx;
+        this.group = group;
         this.deleteDate = deleteDate;
         this.deleteYn = deleteYn;
         this.status = status;
+    }
+
+    /**
+     * codeEntity To codeDTO
+     * @return CodeResponseDTO
+     */
+    public CodeResponseDTO toCodeResponseDTO() {
+        return CodeResponseDTO.builder()
+                .codeIdx(idx)
+                .codeUuid(uuid)
+                .codeName(name)
+                .codeValue(value)
+                .codeDescription(description)
+                .codeCreateDate(StringUtils.localDateTimeToString(getCreateDate()))
+                .codeGroupResponseDTO(group.toCodeGroupResponseDTO())
+                .build();
     }
 }

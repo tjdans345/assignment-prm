@@ -13,7 +13,10 @@ public class StringUtils {
      * @param value 체크할 값
      * @return boolean ( 데이터 공백 or Null 시 true 반환 )
      */
-    public static boolean checkDataEmpty(String value) {
+    public static boolean checkDataNullOrEmpty(String value) {
+        if(value == null) {
+            return true;
+        }
         // 공백 제거 후 데이터 검증
         return org.apache.commons.lang3.StringUtils.isEmpty(value.trim());
     }
@@ -31,15 +34,12 @@ public class StringUtils {
     }
 
 
+    /**
+     * 코드 벨류 값 생성 (uuid)
+     * @return String (codeValue)
+     */
     public static String createCodeValue() {
-
-        final String DATE_FORMAT = "yyyyMMddHHmmss";
-
-        String uuid = RandomStringUtils.randomAlphanumeric(25);
-        String nowDateFormatting = LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_FORMAT));
-
-
-        return "CODE_" + uuid + "_" + nowDateFormatting;
+        return RandomStringUtils.randomAlphanumeric(25);
     }
 
     /**

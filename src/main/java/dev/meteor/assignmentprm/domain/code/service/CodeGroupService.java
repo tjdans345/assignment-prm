@@ -44,7 +44,13 @@ public class CodeGroupService {
         }
         return codeGroupPageList.map(CodeGroupEntity::toCodeGroupResponseDTO);
     }
-    // 코드 그룹 상세 조회
+
+
+    /**
+     * 코드 그룹 상세 조회
+     * @param idx Long (코드 그룹 Idx)
+     * @return CodeGroupResponseDTO
+     */
     public CodeGroupResponseDTO getCodeGroupDetail(Long idx) {
 
         Optional<CodeGroupEntity> codeGroupOptional = codeGroupRepository.findById(idx);
@@ -73,6 +79,7 @@ public class CodeGroupService {
 
     /**
      * 코드 그룹 이름 중복 조회 Method
+     * 중복 조회 비지니스 로직은 ValidationAdvice 에 있습니다.
      * @param checkDuplicateNameRequestDTO CheckDuplicateNameRequestDTO
      * @return boolean (통과여부 true : 통과)
      */
@@ -81,6 +88,7 @@ public class CodeGroupService {
         // 데이터 유효성 검증 진행
         checkDataValid(checkDuplicateNameRequestDTO.getCheckName());
         return true;
+
     }
 
     /**
@@ -89,8 +97,8 @@ public class CodeGroupService {
      * @param checkData String (체크 할 값)
      */
     private void checkDataValid(String checkData) {
-        boolean checkResult = StringUtils.checkDataEmpty(checkData);
-        if (checkResult) {
+        boolean isNullOrEmpty = StringUtils.checkDataNullOrEmpty(checkData);
+        if (isNullOrEmpty) {
             throw new CommonException( ErrorEnum.EMPTY_REQUEST_DATA);
         }
     }
@@ -111,7 +119,7 @@ public class CodeGroupService {
         CodeGroupEntity codeGroup = codeGroupOptional.get();
 
         // 삭제 여부 체크 삭제 된 데이터는 데이터 값 수정 안하기 위한 목적
-        checkDeleteData(codeGroup);
+        checkAlreadyDeleteData(codeGroup);
 
         codeGroup.setName(updateCodeGroupRequestDTO.getCodeGroupName());
         codeGroup.setStatus(CodeGroupStatusEnum.valueOf(updateCodeGroupRequestDTO.getCodeGroupStatus()));
@@ -122,9 +130,18 @@ public class CodeGroupService {
         return updateCodeGroup.toCodeGroupResponseDTO();
     }
 
-    // 코드 그룹 삭제
+    /**
+     * 코드 그룹 삭제
+     * 코드 그룹 삭제 시 해당 코드 그룹을 들고있는 하위 코드들도 전체 삭제 처리 진행
+     * @param idx Long (코드 그룹 Idx)
+     * @return String ( 결과 메시지 )
+     */
     @Transactional
     public String deleteCodeGroup(Long idx) {
+
+        if(idx == null) {
+            throw new CommonException(ErrorEnum.EMPTY_REQUEST_DATA);
+        }
 
         Optional<CodeGroupEntity> codeGroupOptional = codeGroupRepository.findById(idx);
         if(codeGroupOptional.isEmpty()) {
@@ -133,9 +150,9 @@ public class CodeGroupService {
         CodeGroupEntity codeGroup = codeGroupOptional.get();
 
         // 데이터 삭제 여부 체크 ( 이미 삭제 된 데이터면 이 후 로직 실행 안시키기 위함 )
-        checkDeleteData(codeGroup);
+        checkAlreadyDeleteData(codeGroup);
 
-        // TODO 테스트 진행해봐야 함 (영속성)
+        // 해당 코드 그룹을 가지고 있는 하위 코드들도 삭제 처리
         if(codeGroup.getCodeEntityList() != null && !codeGroup.getCodeEntityList().isEmpty()) {
             codeGroup.setCodeEntityList(codeGroup.getCodeEntityList().stream().peek(
                     codeEntity -> {
@@ -150,7 +167,7 @@ public class CodeGroupService {
 
         codeGroupRepository.save(codeGroup);
 
-        return "삭제 처리에 성공하였습니다.";
+        return "데이터 삭제에 성공하였습니다.";
 
     }
 
@@ -158,7 +175,7 @@ public class CodeGroupService {
      * 코드 그룹 데이터 삭제 여부 체크 Method
      * @param codeGroup CodeGroupEntity
      */
-    private void checkDeleteData(CodeGroupEntity codeGroup) {
+    private void checkAlreadyDeleteData(CodeGroupEntity codeGroup) {
         if("Y".equals(codeGroup.getDeleteYn())) {
             throw new CommonException(ErrorEnum.ALREADY_DELETE_DATA);
         }

@@ -15,4 +15,7 @@ public interface CodeGroupRepository extends JpaRepository<CodeGroupEntity, Long
 
     Optional<CodeGroupEntity> findByName(String name);
     Optional<CodeGroupEntity> findByIdxAndStatus(Long idx, CodeGroupStatusEnum status);
+    Optional<CodeGroupEntity> findByIdxAndStatusAndDeleteYn(Long idx, CodeGroupStatusEnum status, String deleteYn);
+
+
 }
