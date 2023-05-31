@@ -3,7 +3,6 @@
 
 ### DB Setting 관련 ###
 db name : assignment-db
-명령어 : CREATE DATABASE assignment-db
 
 username : ejm
 password : ejm1234

@@ -1,5 +1,8 @@
 package dev.meteor.assignmentprm.domain.code.domain.dto.request;
 
+import dev.meteor.assignmentprm.domain.code.domain.entity.CodeGroupEntity;
+import dev.meteor.assignmentprm.global.enum_package.uuid.UuidTypeEnum;
+import dev.meteor.assignmentprm.global.utils.StringUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -22,5 +25,12 @@ public class CreateCodeRequestDTO {
     public CreateCodeRequestDTO(String codeName, Long codeGroupIdx) {
         this.codeName = codeName;
         this.codeGroupIdx = codeGroupIdx;
+    }
+
+    public CodeGroupEntity toCodeGroupEntity() {
+        return CodeGroupEntity.builder()
+                .uuid(StringUtils.createUUID(UuidTypeEnum.CODE_GROUP))
+                .name(codeName)
+                .build();
     }
 }

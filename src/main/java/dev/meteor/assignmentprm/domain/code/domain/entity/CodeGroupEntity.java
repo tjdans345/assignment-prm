@@ -1,6 +1,9 @@
 package dev.meteor.assignmentprm.domain.code.domain.entity;
 
+import dev.meteor.assignmentprm.domain.code.domain.dto.response.CodeGroupResponseDTO;
 import dev.meteor.assignmentprm.domain.code.enums.CodeGroupStatusEnum;
+import dev.meteor.assignmentprm.global.common.domain.enity.BaseCreateAndUpdateTimeEntity;
+import dev.meteor.assignmentprm.global.utils.StringUtils;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -16,11 +19,13 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "tb_common_code_group")
-public class CodeGroupEntity {
+public class CodeGroupEntity extends BaseCreateAndUpdateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx; // 코드 그룹 인덱스
+
+    private String uuid; // 코드 그룹 uuid
 
     private String name; // 코드 그룹 이름
 
@@ -37,9 +42,11 @@ public class CodeGroupEntity {
     private List<CodeEntity> codeEntityList;
 
     @Builder
-    public CodeGroupEntity(Long idx, String name, String description,
-                           LocalDateTime deleteDate, String deleteYn, CodeGroupStatusEnum status, List<CodeEntity> codeEntityList) {
+    public CodeGroupEntity(Long idx, String uuid, String name, String description,
+                           LocalDateTime deleteDate, String deleteYn,
+                           CodeGroupStatusEnum status, List<CodeEntity> codeEntityList) {
         this.idx = idx;
+        this.uuid = uuid;
         this.name = name;
         this.description = description;
         this.deleteDate = deleteDate;
@@ -47,4 +54,16 @@ public class CodeGroupEntity {
         this.status = status;
         this.codeEntityList = codeEntityList;
     }
+
+    public CodeGroupResponseDTO toCodeGroupResponseDTO() {
+        return CodeGroupResponseDTO.builder()
+                .codeGroupIdx(idx)
+                .codeGroupUuid(uuid)
+                .codeGroupName(name)
+                .codeGroupDescription(description)
+                .codeGroupCreateDate(StringUtils.localDateTimeToString(getCreateDate()))
+                .build();
+    }
+
+
 }

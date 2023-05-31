@@ -1,12 +1,8 @@
 package dev.meteor.assignmentprm;
 
-
-import dev.meteor.assignmentprm.domain.code.domain.entity.CodeEntity;
 import dev.meteor.assignmentprm.domain.code.domain.entity.CodeGroupEntity;
 import dev.meteor.assignmentprm.domain.code.enums.CodeGroupStatusEnum;
-import dev.meteor.assignmentprm.domain.code.enums.CodeStatusEnum;
 import dev.meteor.assignmentprm.domain.code.repository.CodeGroupRepository;
-import dev.meteor.assignmentprm.domain.code.repository.CodeRepository;
 import dev.meteor.assignmentprm.global.enum_package.uuid.UuidTypeEnum;
 import dev.meteor.assignmentprm.global.utils.StringUtils;
 import org.junit.jupiter.api.Assertions;
@@ -21,28 +17,25 @@ import java.util.Optional;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class CodeRepositoryTest {
-
-    @Autowired
-    private CodeRepository codeRepository;
+public class CodeGroupRepositoryTest {
 
     @Autowired
     private CodeGroupRepository codeGroupRepository;
+    private final String newCodeName = "새로운 코드 그룹";
 
-    private final String newCodeName = "새로운 코드";
+    private final String newDescription = "서울 지역의 대리점에서 사용되는 공통코드들을 관리하는 코드그룹 입니다.";
 
-    private final String newDescription = "서울 관악구 1번 대리점";
-
-    private final CodeStatusEnum codeStatus = CodeStatusEnum.ACTIVE;
+    private final CodeGroupStatusEnum codeGroupStatus = CodeGroupStatusEnum.ACTIVE;
 
     @Test
     @DisplayName("데이터 저장 확인")
     void createCodeGroup() {
         String newUuid = createUuid();
-        CodeEntity codeGroup = saveGroup(newUuid, "N");
+        CodeGroupEntity codeGroup = saveGroup(newUuid, "N");
 
         Assertions.assertEquals(codeGroup.getName(), newCodeName);
-        Assertions.assertEquals(codeGroup.getStatus(), codeStatus);
+        Assertions.assertEquals(codeGroup.getStatus(), codeGroupStatus);
+        Assertions.assertNull(codeGroup.getCodeEntityList());
         Assertions.assertNull(codeGroup.getDeleteDate());
         Assertions.assertEquals(codeGroup.getDeleteYn(), "N");
         Assertions.assertEquals(codeGroup.getUuid(), newUuid);
@@ -54,8 +47,8 @@ public class CodeRepositoryTest {
     @DisplayName("전체 내역 조회 + deleteYn(N)")
     void findAll() {
         String uuid = createUuid();
-        CodeEntity codeGroup = saveGroup(uuid, "N");
-        List<CodeEntity> codeGroups = codeRepository.findAll();
+        CodeGroupEntity codeGroup1 = saveGroup(uuid, "N");
+        List<CodeGroupEntity> codeGroups = codeGroupRepository.findAll();
 
         Assertions.assertNotEquals(codeGroups.size(), 0);
 
@@ -66,9 +59,8 @@ public class CodeRepositoryTest {
     @DisplayName("ID 조회")
     void findById() {
         String uuid = createUuid();
-        CodeEntity codeGroup = saveGroup(uuid, "N");
-
-        Optional<CodeEntity> optional = codeRepository.findById(codeGroup.getIdx());
+        CodeGroupEntity codeGroup = saveGroup(uuid, "N");
+        Optional<CodeGroupEntity> optional = codeGroupRepository.findById(codeGroup.getIdx());
 
         Assertions.assertTrue(optional.isPresent());
 
@@ -78,8 +70,8 @@ public class CodeRepositoryTest {
     @DisplayName("ID 조회 + Status 값")
     void findIdxAndStatus() {
         String uuid = createUuid();
-        CodeEntity codeGroup = saveGroup(uuid, "N");
-        Optional<CodeEntity> optional = codeRepository.findByIdxAndStatus(codeGroup.getIdx(), codeStatus);
+        CodeGroupEntity codeGroup = saveGroup(uuid, "N");
+        Optional<CodeGroupEntity> optional = codeGroupRepository.findByIdxAndStatus(codeGroup.getIdx(), codeGroupStatus);
 
         Assertions.assertTrue(optional.isPresent());
     }
@@ -89,52 +81,35 @@ public class CodeRepositoryTest {
     void updateCodeGroup() {
         final String newName = "변경된 그룹이름";
         String uuid = createUuid();
-        CodeEntity code = saveGroup(uuid, "N");
+        CodeGroupEntity codeGroup = saveGroup(uuid, "N");
 
-        code.setName(newName);
-        code.setStatus(CodeStatusEnum.DISABLE);
-        CodeEntity updateGroup = codeRepository.save(code);
+        codeGroup.setName(newName);
+        codeGroup.setStatus(CodeGroupStatusEnum.DISABLE);
+        CodeGroupEntity updateGroup = codeGroupRepository.save(codeGroup);
 
-        Assertions.assertEquals(code.getIdx(), updateGroup.getIdx());
+        Assertions.assertEquals(codeGroup.getIdx(), updateGroup.getIdx());
         Assertions.assertEquals(updateGroup.getName(), newName);
-        Assertions.assertEquals(updateGroup.getStatus(), CodeStatusEnum.DISABLE);
+        Assertions.assertEquals(updateGroup.getStatus(), CodeGroupStatusEnum.DISABLE);
+
 
     }
 
-    private CodeEntity saveGroup(String uuid, String deleteYn) {
 
-        CodeGroupEntity codeGroup = saveCodeGroup();
-
-
-        return codeRepository.save(CodeEntity.builder()
-                .idx(null)
-                .uuid(uuid)
-                .value(createCodeValue())
-                .name(newCodeName)
-                .status(CodeStatusEnum.ACTIVE)
-                .deleteYn(deleteYn)
-                .description(newDescription)
-                .group_idx(codeGroup.getIdx())
-                .build());
-    }
-
-    private CodeGroupEntity saveCodeGroup() {
+    private CodeGroupEntity saveGroup(String uuid, String deleteYn){
         return codeGroupRepository.save(CodeGroupEntity.builder()
                 .idx(null)
-                .uuid(StringUtils.createUUID(UuidTypeEnum.CODE_GROUP))
+                .uuid(uuid)
                 .name(newCodeName)
                 .status(CodeGroupStatusEnum.ACTIVE)
-                .deleteYn("N")
+                .deleteYn(deleteYn)
                 .description(newDescription)
                 .build());
     }
 
     private String createUuid() {
-        return StringUtils.createUUID(UuidTypeEnum.CODE);
+        return StringUtils.createUUID(UuidTypeEnum.CODE_GROUP);
     }
 
-    private String createCodeValue() {
-        return StringUtils.createCodeValue();
-    }
+
 
 }

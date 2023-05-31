@@ -23,7 +23,11 @@ public class CodeEntity extends BaseCreateAndUpdateTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx; // 코드 인덱스
 
+    private String uuid; // 코드 uuid
+
     private String name; // 코드 이름(한글명)
+
+    private String description; // 코드에 대한 간략한 설명
 
     private String value; // 코드 값
 
@@ -39,14 +43,16 @@ public class CodeEntity extends BaseCreateAndUpdateTimeEntity {
     private CodeStatusEnum status; // 코드 상태
 
     @Builder
-    public CodeEntity(Long idx, String name, Long group_idx,
-                      LocalDateTime deleteDate, String deleteYn, CodeStatusEnum status ) {
+    public CodeEntity(Long idx, String uuid, String name, String description , String value, Long group_idx,
+                      LocalDateTime deleteDate, String deleteYn, CodeStatusEnum status) {
         this.idx = idx;
+        this.uuid = uuid;
         this.name = name;
+        this.description = description;
+        this.value = value;
         this.group_idx = group_idx;
         this.deleteDate = deleteDate;
         this.deleteYn = deleteYn;
         this.status = status;
     }
-
 }
